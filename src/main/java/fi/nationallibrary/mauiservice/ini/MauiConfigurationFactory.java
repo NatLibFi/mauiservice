@@ -1,4 +1,4 @@
-package fi.nationallibrary.mauiservice;
+package fi.nationallibrary.mauiservice.ini;
 
 /*-
  * #%L
@@ -24,14 +24,8 @@ package fi.nationallibrary.mauiservice;
  * #L%
  */
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.io.Reader;
 
-@SpringBootApplication
-public class Application {
-	
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-	}
-	
+public interface MauiConfigurationFactory {
+	public MauiConfiguration readConfig(Reader reader);
 }

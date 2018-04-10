@@ -1,4 +1,4 @@
-package fi.nationallibrary.mauiservice;
+package fi.nationallibrary.mauiservice.ini;
 
 /*-
  * #%L
@@ -24,14 +24,17 @@ package fi.nationallibrary.mauiservice;
  * #L%
  */
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.util.Map;
 
-@SpringBootApplication
-public class Application {
+public class MauiConfiguration {
+	public Map<String, MauiModelConfiguration> configurations;
 	
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+	public void setConfigurations(Map<String, MauiModelConfiguration> configurations) {
+		this.configurations = configurations;
+	}
+	
+	public Map<String, MauiModelConfiguration> getConfigurations() {
+		return configurations;
 	}
 	
 }
