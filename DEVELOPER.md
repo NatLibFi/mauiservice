@@ -1,5 +1,20 @@
 # Development notes
 
+## Building and running
+
+To build and run, run the following commands:
+
+```shell
+mvn clean install
+java -jar target/mauiservice-0.0.1-SNAPSHOT.jar --configuration=src/test/resources/test-config/test.ini
+```
+
+.. or by just using maven
+
+```shell
+mvn spring-boot:run -Dspring-boot.run.arguments="--configuration=src/test/resources/test-config/test.ini"
+```
+
 ## Testing the service
 
 Below are examples of sending a text analysis request to the service. The first example uses JSON encoding and the second the classic application/x-www-form-urlencoded
