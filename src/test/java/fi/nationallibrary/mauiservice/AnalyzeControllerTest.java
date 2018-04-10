@@ -45,7 +45,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import fi.nationallibrary.mauiservice.ini.MauiConfiguration;
-import fi.nationallibrary.mauiservice.ini.MauiModelConfiguration;
+import fi.nationallibrary.mauiservice.ini.MauiFilterConfiguration;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -61,8 +61,8 @@ public class AnalyzeControllerTest {
 	@Test
 	public void getExistingService() throws Exception {
 		
-		Map<String, MauiModelConfiguration> mockConfig = new HashMap<>();
-		mockConfig.put("foo", new MauiModelConfiguration());
+		Map<String, MauiFilterConfiguration> mockConfig = new HashMap<>();
+		mockConfig.put("foo", new MauiFilterConfiguration());
 		
 		when(configuration.getConfigurations()).thenReturn(mockConfig);
 		
@@ -76,7 +76,7 @@ public class AnalyzeControllerTest {
 	@Test
 	public void getNonExistingService() throws Exception {
 		
-		Map<String, MauiModelConfiguration> mockConfig = new HashMap<>();
+		Map<String, MauiFilterConfiguration> mockConfig = new HashMap<>();
 		
 		when(configuration.getConfigurations()).thenReturn(mockConfig);
 		

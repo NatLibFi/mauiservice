@@ -43,15 +43,15 @@ public class INI4JMauiConfigurationFactoryImpl implements MauiConfigurationFacto
 			MauiConfiguration ret = new MauiConfiguration();
 			
 			for (Entry<String, Section> e : ini.entrySet()) {
-				MauiModelConfiguration mmc = new MauiModelConfiguration();
+				MauiFilterConfiguration mmc = new MauiFilterConfiguration();
 				ret.getConfigurations().put(e.getKey(), mmc);
 				
-				
-				mmc.setLanguage  (getFieldOrFail(e, "language"));
-				mmc.setModel     (getFieldOrFail(e, "model"));
-				mmc.setStemmer   (getFieldOrFail(e, "stemmer"));
-				mmc.setStopwords (getFieldOrFail(e, "stopwords"));
-				mmc.setVocab     (getFieldOrFail(e, "vocab"));
+				mmc.setLanguage   (getFieldOrFail(e, "language"));
+				mmc.setModel      (getFieldOrFail(e, "model"));
+				mmc.setStemmer    (getFieldOrFail(e, "stemmer"));
+				mmc.setStopwords  (getFieldOrFail(e, "stopwords"));
+				mmc.setVocab      (getFieldOrFail(e, "vocab"));
+				mmc.setVocabFormat(getFieldOrFail(e, "vocabformat"));
 			}
 			
 			return ret;

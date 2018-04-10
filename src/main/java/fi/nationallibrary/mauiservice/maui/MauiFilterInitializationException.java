@@ -1,6 +1,4 @@
-package fi.nationallibrary.mauiservice.ini;
-
-import java.util.HashMap;
+package fi.nationallibrary.mauiservice.maui;
 
 /*-
  * #%L
@@ -26,17 +24,14 @@ import java.util.HashMap;
  * #L%
  */
 
-import java.util.Map;
+public class MauiFilterInitializationException extends Exception {
+	private static final long serialVersionUID = 1L;
 
-public class MauiConfiguration {
-	public Map<String, MauiFilterConfiguration> configurations = new HashMap<>();
-	
-	public void setConfigurations(Map<String, MauiFilterConfiguration> configurations) {
-		this.configurations = configurations;
+	public MauiFilterInitializationException(Throwable cause) {
+		super(cause);
 	}
 	
-	public Map<String, MauiFilterConfiguration> getConfigurations() {
-		return configurations;
+	public MauiFilterInitializationException(String message, Throwable cause) {
+		super(message, cause);
 	}
-	
 }

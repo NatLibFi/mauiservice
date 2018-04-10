@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Configuration;
 import fi.nationallibrary.mauiservice.ini.INI4JMauiConfigurationFactoryImpl;
 import fi.nationallibrary.mauiservice.ini.MauiConfiguration;
 import fi.nationallibrary.mauiservice.ini.MauiConfigurationFactory;
+import fi.nationallibrary.mauiservice.maui.MauiFilterFactory;
+import fi.nationallibrary.mauiservice.maui.MauiFilterFactoryImpl;
 
 /*-
  * #%L
@@ -63,4 +65,10 @@ public class ApplicationConfiguration {
 			return factory.readConfig(reader);
 		}
 	}
+	
+	@Bean
+	public MauiFilterFactory mauiFilterFactory() {
+		return new MauiFilterFactoryImpl();
+	}
+	
 }

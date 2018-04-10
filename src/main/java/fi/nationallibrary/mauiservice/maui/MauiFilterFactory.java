@@ -1,8 +1,4 @@
-package fi.nationallibrary.mauiservice;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
+package fi.nationallibrary.mauiservice.maui;
 
 /*-
  * #%L
@@ -28,26 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  * #L%
  */
 
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.entopix.maui.filters.MauiFilter;
 
-import fi.nationallibrary.mauiservice.ini.MauiConfiguration;
 import fi.nationallibrary.mauiservice.ini.MauiFilterConfiguration;
 
-@RestController
-public class AnalyzeController {
-	
-	@Autowired
-	private MauiConfiguration configuration;
-
-	@RequestMapping("/maui/{id}/analyze")
-	public String analyze(@PathVariable("id") String configurationId, HttpServletResponse response) {
-		MauiFilterConfiguration model = configuration.getConfigurations().get(configurationId);
-		if (model == null) {
-			response.setStatus(404);
-			return null;
-		}
-		return "Hello world: "+configurationId;
-	}
+public interface MauiFilterFactory {
+	public MauiFilter createFilter(MauiFilterConfiguration config) throws MauiFilterInitializationException;
 }

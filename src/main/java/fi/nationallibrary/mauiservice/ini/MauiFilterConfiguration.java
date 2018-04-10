@@ -24,9 +24,10 @@ package fi.nationallibrary.mauiservice.ini;
  * #L%
  */
 
-public class MauiModelConfiguration {
+public class MauiFilterConfiguration {
 	private String model;
 	private String vocab;
+	private String vocabFormat;
 	private String language;
 	private String stopwords;
 	private String stemmer;
@@ -45,6 +46,14 @@ public class MauiModelConfiguration {
 	
 	public void setVocab(String vocab) {
 		this.vocab = vocab;
+	}
+	
+	public void setVocabFormat(String vocabFormat) {
+		this.vocabFormat = vocabFormat;
+	}
+	
+	public String getVocabFormat() {
+		return vocabFormat;
 	}
 	
 	public String getLanguage() {
