@@ -1,7 +1,9 @@
 package fi.nationallibrary.mauiservice;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,8 @@ import fi.nationallibrary.mauiservice.ini.MauiConfiguration;
 import fi.nationallibrary.mauiservice.ini.MauiConfigurationFactory;
 import fi.nationallibrary.mauiservice.maui.MauiFilterFactory;
 import fi.nationallibrary.mauiservice.maui.MauiFilterFactoryImpl;
+import fi.nationallibrary.mauiservice.maui.MauiFilterInitializationException;
+import fi.nationallibrary.mauiservice.maui.MauiFilters;
 
 /*-
  * #%L
@@ -55,20 +59,41 @@ public class ApplicationConfiguration {
 	public MauiConfiguration mauiConfigration(MauiConfigurationFactory factory, ApplicationArguments arg) throws IOException
 	{
 		String configFile = DEFAULT_CONFIGURATION_FILE;
+		
 		if (arg.containsOption("configuration")) {
-			configFile = arg.getOptionValues("configuration").get(0);
+			List<String> tmp = arg.getOptionValues("configuration");
+			if (tmp.size() == 0) {
+				throw new IllegalArgumentException("You need to specify a value: --configuration=file.ini");
+			}
+			if (tmp.size() > 1) {
+				throw new IllegalArgumentException("Please specify only one value for --configuration=file.ini");
+			}
+			configFile = tmp.get(0);
+			logger.info("Loading INI file "+configFile);
+		} else {
+		
+			logger.info("Loading INI file with default file name ("+configFile+"), you can specify another location via --configuration=path/to/file.ini");
 		}
 		
-		logger.info("Loading INI file "+configFile);
-		
-		try (FileReader reader = new FileReader(configFile)) {
-			return factory.readConfig(reader);
+		File iniFile = new File(configFile);
+		try (FileReader reader = new FileReader(iniFile)) {
+			return factory.readConfig(iniFile.getParentFile(), reader);
 		}
 	}
 	
 	@Bean
 	public MauiFilterFactory mauiFilterFactory() {
 		return new MauiFilterFactoryImpl();
+	}
+	
+	@Bean
+	public MauiFilters mauiFilters(MauiFilterFactory factory, MauiConfiguration config) throws MauiFilterInitializationException {
+		MauiFilters ret = new MauiFilters();
+		ret.setFilterFactory(factory);
+		ret.setConfiguration(config);
+		ret.init();
+		
+		return ret;
 	}
 	
 }

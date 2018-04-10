@@ -44,8 +44,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import com.entopix.maui.filters.MauiFilter;
+
 import fi.nationallibrary.mauiservice.ini.MauiConfiguration;
-import fi.nationallibrary.mauiservice.ini.MauiFilterConfiguration;
+import fi.nationallibrary.mauiservice.maui.MauiFilters;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -55,16 +57,16 @@ public class AnalyzeControllerTest {
 	@MockBean
 	private MauiConfiguration configuration;
 	
+	@MockBean
+	private MauiFilters filters;
+	
 	@Autowired
 	private MockMvc mvc;
 
 	@Test
 	public void getExistingService() throws Exception {
 		
-		Map<String, MauiFilterConfiguration> mockConfig = new HashMap<>();
-		mockConfig.put("foo", new MauiFilterConfiguration());
-		
-		when(configuration.getConfigurations()).thenReturn(mockConfig);
+		when(filters.getFilter("foo")).thenReturn(mock(MauiFilter.class));
 		
 		mvc.perform(MockMvcRequestBuilders
 				.get("/maui/foo/analyze")
@@ -76,10 +78,12 @@ public class AnalyzeControllerTest {
 	@Test
 	public void getNonExistingService() throws Exception {
 		
+		/*
 		Map<String, MauiFilterConfiguration> mockConfig = new HashMap<>();
 		
 		when(configuration.getConfigurations()).thenReturn(mockConfig);
-		
+		*/
+		when(filters.getFilter("foo")).thenReturn(null);
 		mvc.perform(MockMvcRequestBuilders
 				.get("/maui/foo/analyze")
 				.accept(MediaType.APPLICATION_JSON)).

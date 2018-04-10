@@ -1,5 +1,7 @@
 package fi.nationallibrary.mauiservice.ini;
 
+import java.io.File;
+
 /*-
  * #%L
  * fi.nationallibrary:mauiservice
@@ -25,12 +27,21 @@ package fi.nationallibrary.mauiservice.ini;
  */
 
 public class MauiFilterConfiguration {
+	private File configurationDirectory;
 	private String model;
 	private String vocab;
 	private String vocabFormat;
 	private String language;
 	private String stopwords;
 	private String stemmer;
+	
+	public File getConfigurationDirectory() {
+		return configurationDirectory;
+	}
+	
+	public void setConfigurationDirectory(File configurationDirectory) {
+		this.configurationDirectory = configurationDirectory;
+	}
 	
 	public String getModel() {
 		return model;

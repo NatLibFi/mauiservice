@@ -1,5 +1,6 @@
 package fi.nationallibrary.mauiservice.ini;
 
+import java.io.File;
 import java.io.IOException;
 
 /*-
@@ -36,7 +37,7 @@ import org.ini4j.Wini;
 public class INI4JMauiConfigurationFactoryImpl implements MauiConfigurationFactory {
 
 	@Override
-	public MauiConfiguration readConfig(Reader reader) throws IOException {
+	public MauiConfiguration readConfig(File configurationPath, Reader reader) throws IOException {
 		try {
 			Wini ini = new Wini(reader);
 			
@@ -52,6 +53,8 @@ public class INI4JMauiConfigurationFactoryImpl implements MauiConfigurationFacto
 				mmc.setStopwords  (getFieldOrFail(e, "stopwords"));
 				mmc.setVocab      (getFieldOrFail(e, "vocab"));
 				mmc.setVocabFormat(getFieldOrFail(e, "vocabformat"));
+				
+				mmc.setConfigurationDirectory(configurationPath);
 			}
 			
 			return ret;

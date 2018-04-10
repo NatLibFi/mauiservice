@@ -26,6 +26,7 @@ package fi.nationallibrary.mauiservice.ini;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
 
@@ -35,17 +36,20 @@ public class INI4JMauiConfigurationFactoryImplTest {
 
 	@Test
 	public void test() throws Exception {
-		Reader reader = new FileReader("src/test/resources/example-configuration.ini");
+		File f = new File("src/test/resources/example-configuration.ini");
+		Reader reader = new FileReader(f);
 		INI4JMauiConfigurationFactoryImpl factory = new INI4JMauiConfigurationFactoryImpl();
 		
 		
-		MauiConfiguration config = factory.readConfig(reader);
+		MauiConfiguration config = factory.readConfig(f.getParentFile(), reader);
 		
 		assertEquals(2, config.getConfigurations().size());
 		
 		assertConfig(config.getConfigurations().get("foo"),    "fi", "foo", "bar",  "gah",  "goo", "zah");
 		assertConfig(config.getConfigurations().get("foo-sv"), "sv", "lol", "zonk", "barg", "42",  "trol");
 		
+		File expectedConfigPath = new File("src/test/resources/");
+		assertEquals(expectedConfigPath, config.getConfigurations().get("foo").getConfigurationDirectory());
 	}
 
 	private void assertConfig(MauiFilterConfiguration m, String language, String model,

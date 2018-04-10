@@ -1,5 +1,7 @@
 package fi.nationallibrary.mauiservice.maui;
 
+import java.io.File;
+
 /*-
  * #%L
  * fi.nationallibrary:mauiservice
@@ -29,9 +31,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.entopix.maui.filters.MauiFilter;
 import com.entopix.maui.stemmers.Stemmer;
 import com.entopix.maui.stopwords.Stopwords;
@@ -47,10 +46,16 @@ public class MauiFilterFactoryImpl implements MauiFilterFactory {
 	public MauiFilter createFilter(MauiFilterConfiguration config) throws MauiFilterInitializationException {
 		MauiFilter ret;
 
+		File modelFile = new File(config.getConfigurationDirectory(), config.getModel());
+		File vocabFile = new File(config.getConfigurationDirectory(), config.getVocab());
+		
+		testFile("Model", modelFile);
+		testFile("Vocabulary", vocabFile);
+		
 		// TODO: Maui needs to be refactored 
 		VocabularyStoreFactory.setPrefferedVocabStoreType(VocabularyStore_HT.class);
 
-		try (InputStream is = new FileInputStream(config.getModel())) {
+		try (InputStream is = new FileInputStream(modelFile)) {
 			ObjectInputStream in = new ObjectInputStream(is);
 			ret = (MauiFilter) in.readObject();
 
@@ -61,6 +66,7 @@ public class MauiFilterFactoryImpl implements MauiFilterFactory {
 		}
 
 		ret.setVocabularyName(config.getVocab());
+		
 		ret.setVocabularyFormat(config.getVocabFormat());
 		ret.setDocumentLanguage(config.getLanguage());
 		
@@ -87,10 +93,25 @@ public class MauiFilterFactoryImpl implements MauiFilterFactory {
         
 		vocabulary.setLanguage(config.getLanguage());
 		vocabulary.setSerialize(false); // Not sure what this really is
-		vocabulary.initializeVocabulary(config.getVocab(), config.getVocabFormat());
+		
+		vocabulary.initializeVocabulary(vocabFile.getAbsolutePath(), config.getVocabFormat());
 
 		ret.setVocabulary(vocabulary);
 
 		return ret;
+	}
+
+	private void testFile(String type, File file) throws MauiFilterInitializationException {
+		if (!file.exists()) {
+			throw new MauiFilterInitializationException(type+" file "+file+" does not exist!");
+		}
+		
+		if (file.isDirectory()) {
+			throw new MauiFilterInitializationException(type+" file "+file+" is a directory, expecting a file!");
+		}
+		
+		if (!file.canRead()) {
+			throw new MauiFilterInitializationException("Cannot read "+type+" file "+file+"!");
+		}
 	}
 }

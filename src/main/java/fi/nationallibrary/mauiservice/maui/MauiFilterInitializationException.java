@@ -30,6 +30,10 @@ public class MauiFilterInitializationException extends Exception {
 	public MauiFilterInitializationException(Throwable cause) {
 		super(cause);
 	}
+
+	public MauiFilterInitializationException(String message) {
+		super(message);
+	}
 	
 	public MauiFilterInitializationException(String message, Throwable cause) {
 		super(message, cause);

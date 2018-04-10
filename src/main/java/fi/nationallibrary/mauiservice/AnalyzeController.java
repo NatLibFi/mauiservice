@@ -32,19 +32,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import fi.nationallibrary.mauiservice.ini.MauiConfiguration;
-import fi.nationallibrary.mauiservice.ini.MauiFilterConfiguration;
+import com.entopix.maui.filters.MauiFilter;
+
+import fi.nationallibrary.mauiservice.maui.MauiFilters;
 
 @RestController
 public class AnalyzeController {
 	
 	@Autowired
-	private MauiConfiguration configuration;
+	private MauiFilters filters;
 
 	@RequestMapping("/maui/{id}/analyze")
 	public String analyze(@PathVariable("id") String configurationId, HttpServletResponse response) {
-		MauiFilterConfiguration model = configuration.getConfigurations().get(configurationId);
-		if (model == null) {
+		MauiFilter filter = filters.getFilter(configurationId);
+		
+		if (filter == null) {
 			response.setStatus(404);
 			return null;
 		}
