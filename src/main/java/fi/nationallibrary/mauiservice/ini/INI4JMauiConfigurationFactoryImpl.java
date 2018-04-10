@@ -1,5 +1,7 @@
 package fi.nationallibrary.mauiservice.ini;
 
+import java.io.IOException;
+
 /*-
  * #%L
  * fi.nationallibrary:mauiservice
@@ -25,13 +27,52 @@ package fi.nationallibrary.mauiservice.ini;
  */
 
 import java.io.Reader;
+import java.util.Map.Entry;
+
+import org.ini4j.InvalidFileFormatException;
+import org.ini4j.Profile.Section;
+import org.ini4j.Wini;
 
 public class INI4JMauiConfigurationFactoryImpl implements MauiConfigurationFactory {
 
 	@Override
-	public MauiConfiguration readConfig(Reader reader) {
-		// TODO Auto-generated method stub
-		return null;
+	public MauiConfiguration readConfig(Reader reader) throws IOException {
+		try {
+			Wini ini = new Wini(reader);
+			
+			MauiConfiguration ret = new MauiConfiguration();
+			
+			for (Entry<String, Section> e : ini.entrySet()) {
+				MauiModelConfiguration mmc = new MauiModelConfiguration();
+				ret.getConfigurations().put(e.getKey(), mmc);
+				
+				
+				mmc.setLanguage  (getFieldOrFail(e, "language"));
+				mmc.setModel     (getFieldOrFail(e, "model"));
+				mmc.setStemmer   (getFieldOrFail(e, "stemmer"));
+				mmc.setStopwords (getFieldOrFail(e, "stopwords"));
+				mmc.setVocab     (getFieldOrFail(e, "vocab"));
+			}
+			
+			return ret;
+			
+		} catch(InvalidFileFormatException e) {
+			throw new IOException(e);
+		}
+	}
+
+	private String getFieldOrFail(Entry<String, Section> e, String key) throws IOException {
+
+		String value = e.getValue().get(key);
+		if (value != null) {
+			value = value.trim();
+		}
+		
+		if (value == null || value.length() == 0) {
+			throw new IOException("Section "+e.getKey()+" is missing value for "+key);
+		}
+		
+		return value;
 	}
 
 }

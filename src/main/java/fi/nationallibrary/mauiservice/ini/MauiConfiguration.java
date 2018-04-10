@@ -1,5 +1,7 @@
 package fi.nationallibrary.mauiservice.ini;
 
+import java.util.HashMap;
+
 /*-
  * #%L
  * fi.nationallibrary:mauiservice
@@ -27,7 +29,7 @@ package fi.nationallibrary.mauiservice.ini;
 import java.util.Map;
 
 public class MauiConfiguration {
-	public Map<String, MauiModelConfiguration> configurations;
+	public Map<String, MauiModelConfiguration> configurations = new HashMap<>();
 	
 	public void setConfigurations(Map<String, MauiModelConfiguration> configurations) {
 		this.configurations = configurations;

@@ -1,5 +1,7 @@
 package fi.nationallibrary.mauiservice.ini;
 
+import java.io.IOException;
+
 /*-
  * #%L
  * fi.nationallibrary:mauiservice
@@ -27,5 +29,5 @@ package fi.nationallibrary.mauiservice.ini;
 import java.io.Reader;
 
 public interface MauiConfigurationFactory {
-	public MauiConfiguration readConfig(Reader reader);
+	public MauiConfiguration readConfig(Reader reader) throws IOException;
 }
