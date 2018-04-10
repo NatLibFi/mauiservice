@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.util.MultiValueMap;
 
 /*-
  * #%L
@@ -53,15 +55,38 @@ public class AnalyzeController {
 	@Autowired
 	private Analyzer analyzer;
 
-	@RequestMapping(path = "/maui/{id}/analyze", method = RequestMethod.POST)
-	public String analyze(
+	
+	@RequestMapping(path = "/maui/{id}/analyze", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	public String analyzeJSON(
 			@PathVariable("id") String configurationId,
 			@RequestBody Map<String, Object> parameters,
 			HttpServletResponse response)
 	{
 		if (logger.isTraceEnabled()) {
-			logger.trace("Received analysis request for id '"+configurationId+"' with text '"+parameters.get("text")+"'");
+			logger.trace("Received JSON analysis request for id '"+configurationId+"' with text '"+parameters.get("text")+"'");
 		}
+		
+		String text = (String)parameters.get("text");
+		
+		return processRequest(configurationId, response, text);
+	}
+
+	
+	@RequestMapping(path = "/maui/{id}/analyze", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, method = RequestMethod.POST)
+	public String analyzeFormEncoded(
+			@PathVariable("id") String configurationId,
+			@RequestBody MultiValueMap<String, Object> parameters,
+			HttpServletResponse response)
+	{
+		if (logger.isTraceEnabled()) {
+			logger.trace("Received FORM analysis request for id '"+configurationId+"' with text '"+parameters.getFirst("text")+"'");
+		}
+		String text = (String)parameters.getFirst("text");
+		
+		return processRequest(configurationId, response, text);
+	}
+
+	private String processRequest(String configurationId, HttpServletResponse response, String text) {
 		MauiFilter filter = filters.getFilter(configurationId);
 		
 		if (filter == null) {
@@ -72,7 +97,7 @@ public class AnalyzeController {
 		// Filters are not synchronized
 		String result;
 		synchronized(filter) {
-			result = analyzer.analyze(filter, (String)parameters.get("text"));
+			result = analyzer.analyze(filter, text);
 		}
 		
 		if (logger.isTraceEnabled()) {
@@ -81,5 +106,4 @@ public class AnalyzeController {
 		
 		return result;
 	}
-
 }
