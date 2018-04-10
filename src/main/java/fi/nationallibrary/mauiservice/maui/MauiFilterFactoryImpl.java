@@ -92,7 +92,7 @@ public class MauiFilterFactoryImpl implements MauiFilterFactory {
 		}
         
 		vocabulary.setLanguage(config.getLanguage());
-		vocabulary.setSerialize(false); // Not sure what this really is
+		vocabulary.setSerialize(false);
 		
 		vocabulary.initializeVocabulary(vocabFile.getAbsolutePath(), config.getVocabFormat());
 

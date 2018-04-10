@@ -1,7 +1,11 @@
 package fi.nationallibrary.mauiservice;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /*-
@@ -29,27 +33,53 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.entopix.maui.filters.MauiFilter;
 
 import fi.nationallibrary.mauiservice.maui.MauiFilters;
 
+
 @RestController
 public class AnalyzeController {
+	private Logger logger = LoggerFactory.getLogger(AnalyzeController.class);
 	
 	@Autowired
 	private MauiFilters filters;
+	
+	@Autowired
+	private Analyzer analyzer;
 
-	@RequestMapping("/maui/{id}/analyze")
-	public String analyze(@PathVariable("id") String configurationId, HttpServletResponse response) {
+	@RequestMapping(path = "/maui/{id}/analyze", method = RequestMethod.POST)
+	public String analyze(
+			@PathVariable("id") String configurationId,
+			@RequestBody Map<String, Object> parameters,
+			HttpServletResponse response)
+	{
+		if (logger.isTraceEnabled()) {
+			logger.trace("Received analysis request for id '"+configurationId+"' with text '"+parameters.get("text")+"'");
+		}
 		MauiFilter filter = filters.getFilter(configurationId);
 		
 		if (filter == null) {
 			response.setStatus(404);
 			return null;
 		}
-		return "Hello world: "+configurationId;
+		
+		// Filters are not synchronized
+		String result;
+		synchronized(filter) {
+			result = analyzer.analyze(filter, (String)parameters.get("text"));
+		}
+		
+		if (logger.isTraceEnabled()) {
+			logger.trace(" - analysis result: '"+result+"'");
+		}
+		
+		return result;
 	}
+
 }

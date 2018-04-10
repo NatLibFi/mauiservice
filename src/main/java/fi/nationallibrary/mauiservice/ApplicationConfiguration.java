@@ -96,4 +96,8 @@ public class ApplicationConfiguration {
 		return ret;
 	}
 	
+	@Bean
+	public Analyzer analyzer() {
+		return new Analyzer();
+	}
 }

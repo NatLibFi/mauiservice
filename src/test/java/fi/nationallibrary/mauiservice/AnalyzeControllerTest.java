@@ -60,19 +60,32 @@ public class AnalyzeControllerTest {
 	@MockBean
 	private MauiFilters filters;
 	
+	@MockBean
+	private Analyzer analyzer;
+	
 	@Autowired
 	private MockMvc mvc;
+	
 
 	@Test
-	public void getExistingService() throws Exception {
+	public void postExistingService() throws Exception {
 		
 		when(filters.getFilter("foo")).thenReturn(mock(MauiFilter.class));
 		
+		when(analyzer.analyze(any(), any())).thenReturn("Hello world: foo!");
+		
+		Map<String, String> request = new HashMap<>();
+		request.put("text", "Puolustusvoimien ortoilmakuvat ovat koko maan kattava oikaistu ilmakuva-aineisto. Ortoilmakuva vastaa geometrialtaan karttaa. Maastoresoluutio on 1 m. Puolustusvoimien ortoilmakuvia ei enää päivitetä. Ortoilmakuvia käytetään kartoituksessa, ympäristön suunnittelussa ja muutosten seurannassa. Mustavalkoinen ortoilmakuva sopii suunnitteluun tai tausta-aineistoksi erilaisille karttaesityksille.");
+		
+		String json = "{\"text\":\"world, hello\"}";
+		
 		mvc.perform(MockMvcRequestBuilders
-				.get("/maui/foo/analyze")
+				.post("/maui/foo/analyze")
+				.contentType(MediaType.APPLICATION_JSON)
+	            .content(json)
 				.accept(MediaType.APPLICATION_JSON)).
 		andExpect(status().isOk())
-				.andExpect(content().string(equalTo("Hello world: foo")));
+				.andExpect(content().string(equalTo("Hello world: foo!")));
 	}
 	
 	@Test
@@ -85,7 +98,7 @@ public class AnalyzeControllerTest {
 		*/
 		when(filters.getFilter("foo")).thenReturn(null);
 		mvc.perform(MockMvcRequestBuilders
-				.get("/maui/foo/analyze")
+				.post("/maui/foo/analyze")
 				.accept(MediaType.APPLICATION_JSON)).
 		andExpect(status().is4xxClientError());
 	}
