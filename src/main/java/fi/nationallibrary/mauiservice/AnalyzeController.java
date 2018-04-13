@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.entopix.maui.filters.MauiFilter;
 
 import fi.nationallibrary.mauiservice.maui.MauiFilters;
+import fi.nationallibrary.mauiservice.response.AnalyzerResponse;
 
 
 @RestController
@@ -57,7 +58,7 @@ public class AnalyzeController {
 
 	
 	@RequestMapping(path = "/maui/{id}/analyze", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
-	public String analyzeJSON(
+	public AnalyzerResponse analyzeJSON(
 			@PathVariable("id") String configurationId,
 			@RequestBody Map<String, Object> parameters,
 			HttpServletResponse response)
@@ -73,7 +74,7 @@ public class AnalyzeController {
 
 	
 	@RequestMapping(path = "/maui/{id}/analyze", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, method = RequestMethod.POST)
-	public String analyzeFormEncoded(
+	public AnalyzerResponse analyzeFormEncoded(
 			@PathVariable("id") String configurationId,
 			@RequestBody MultiValueMap<String, Object> parameters,
 			HttpServletResponse response)
@@ -86,7 +87,7 @@ public class AnalyzeController {
 		return processRequest(configurationId, response, text);
 	}
 
-	private String processRequest(String configurationId, HttpServletResponse response, String text) {
+	private AnalyzerResponse processRequest(String configurationId, HttpServletResponse response, String text) {
 		MauiFilter filter = filters.getFilter(configurationId);
 		
 		if (filter == null) {
@@ -95,7 +96,7 @@ public class AnalyzeController {
 		}
 		
 		// Filters are not synchronized
-		String result;
+		AnalyzerResponse result;
 		synchronized(filter) {
 			result = analyzer.analyze(filter, text);
 		}

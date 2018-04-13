@@ -1,16 +1,37 @@
 package fi.nationallibrary.mauiservice;
 
-import java.util.ArrayList;
-import java.util.List;
+/*-
+ * #%L
+ * fi.nationallibrary:mauiservice
+ * $Id:$
+ * $HeadURL:$
+ * %%
+ * Copyright (C) 2018 National Library Finland
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.entopix.maui.filters.MauiFilter;
 import com.entopix.maui.filters.MauiFilter.MauiFilterException;
-import com.entopix.maui.util.Topic;
 
+import fi.nationallibrary.mauiservice.response.AnalyzerResponse;
+import fi.nationallibrary.mauiservice.response.AnalyzerResponse.AnalyzerResult;
 import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
@@ -19,7 +40,7 @@ import weka.core.Instances;
 public class Analyzer {
 	private static Logger logger = LoggerFactory.getLogger(Analyzer.class);
 	
-	public String analyze(MauiFilter filter, String input) {
+	public AnalyzerResponse analyze(MauiFilter filter, String input) {
 		FastVector atts = new FastVector(3);
         atts.addElement(new Attribute("filename", (FastVector) null));
         atts.addElement(new Attribute("doc", (FastVector) null));
@@ -45,52 +66,30 @@ public class Analyzer {
         }
 
         data = data.stringFreeStructure();
-        //logger.info("-- Processing document: " + document.getFileName());
-
-
-        //Instance[] topRankedInstances = new Instance[topicsPerDocument];
         
-        //MauiTopics documentTopics = new MauiTopics(document.getFilePath());
-
-        //documentTopics.setPossibleCorrect(document.getTopicsString().split("\n").length);
-
         Instance inst;
-        //int index = 0;
-        double probability;
-        Topic topic;
-        String title, id;
-
         logger.trace("-- Keyphrases and feature values:");
 
-        List<String> ret = new ArrayList<>();
-        // Iterating over all extracted topic instances
+        AnalyzerResponse response = new AnalyzerResponse();
         while ((inst = filter.output()) != null) {
-                probability = inst.value(filter.getProbabilityIndex());
-                //if (index < getTopicsPerDocument()) {
-                        //if (probability > getCutOffTopicProbability()) {
-                                //topRankedInstances[index] = inst;
-                                title = inst.stringValue(filter.getOutputFormIndex());
-                                id = "1"; // topRankedInstances[index].
-                                //stringValue(mauiFilter.getOutputFormIndex() + 1); // TODO: Check
-                                topic = new Topic(title,  id,  probability);
-
-                                if ((int)inst.value(inst.numAttributes() - 1) == 1) {
-                                        topic.setCorrectness(true);
-                                } else {
-                                        topic.setCorrectness(false);
-                                }
-                                
-                                if (logger.isTraceEnabled()) {
-                                        logger.trace("Topic " + title + " " + id + " " + probability + " > " + topic.isCorrect());
-                                }
-                                ret.add(inst.stringValue(0));
-                                //index++;
-                        //}
-               // }
+            double probability = inst.value(filter.getProbabilityIndex());
+           
+            String title = inst.stringValue(filter.getOutputFormIndex());
+           
+            AnalyzerResult result = new AnalyzerResult();
+            result.setUri(inst.stringValue(0));
+            result.setScore(probability);
+            result.setLabel(title);
+            
+            if (logger.isTraceEnabled()) {
+                logger.trace(" - result " + result.getUri()+" ("+result.getLabel()+"), score = "+result.getScore());
+            }
+            
+            response.getResults().add(result);
         }
         
         
-        return StringUtils.join(ret, ", ");
+        return response;
 	}
 	
 }

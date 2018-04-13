@@ -24,10 +24,10 @@ package fi.nationallibrary.mauiservice;
  * #L%
  */
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,6 +48,8 @@ import com.entopix.maui.filters.MauiFilter;
 
 import fi.nationallibrary.mauiservice.ini.MauiConfiguration;
 import fi.nationallibrary.mauiservice.maui.MauiFilters;
+import fi.nationallibrary.mauiservice.response.AnalyzerResponse;
+import fi.nationallibrary.mauiservice.response.AnalyzerResponse.AnalyzerResult;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -66,13 +68,20 @@ public class AnalyzeControllerTest {
 	@Autowired
 	private MockMvc mvc;
 	
+	public static final MediaType APPLICATION_JSON_UTF8 =
+			new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
 	@Test
 	public void postExistingService() throws Exception {
 		
 		when(filters.getFilter("foo")).thenReturn(mock(MauiFilter.class));
 		
-		when(analyzer.analyze(any(), any())).thenReturn("Hello world: foo!");
+		AnalyzerResponse response = new AnalyzerResponse();
+		AnalyzerResult result = new AnalyzerResult();
+		result.setLabel("Hello world: foo!");
+		response.getResults().add(result);
+		
+		when(analyzer.analyze(any(), any())).thenReturn(response);
 		
 		Map<String, String> request = new HashMap<>();
 		request.put("text", "Puolustusvoimien ortoilmakuvat ovat koko maan kattava oikaistu ilmakuva-aineisto. Ortoilmakuva vastaa geometrialtaan karttaa. Maastoresoluutio on 1 m. Puolustusvoimien ortoilmakuvia ei enää päivitetä. Ortoilmakuvia käytetään kartoituksessa, ympäristön suunnittelussa ja muutosten seurannassa. Mustavalkoinen ortoilmakuva sopii suunnitteluun tai tausta-aineistoksi erilaisille karttaesityksille.");
@@ -85,17 +94,12 @@ public class AnalyzeControllerTest {
 	            .content(json)
 				.accept(MediaType.APPLICATION_JSON)).
 		andExpect(status().isOk())
-				.andExpect(content().string(equalTo("Hello world: foo!")));
+				.andExpect(content().contentType(APPLICATION_JSON_UTF8))
+				.andExpect(jsonPath("$.results[0].label", is("Hello world: foo!")));
 	}
 	
 	@Test
 	public void getNonExistingService() throws Exception {
-		
-		/*
-		Map<String, MauiFilterConfiguration> mockConfig = new HashMap<>();
-		
-		when(configuration.getConfigurations()).thenReturn(mockConfig);
-		*/
 		when(filters.getFilter("foo")).thenReturn(null);
 		mvc.perform(MockMvcRequestBuilders
 				.post("/maui/foo/analyze")
