@@ -70,7 +70,7 @@ public class Analyzer {
 
 		AnalyzerResponse response = new AnalyzerResponse();
 		while ((inst = filter.output()) != null) {
-			String uri = inst.stringValue(filter.getNormalizedFormIndex());
+			String uri = inst.stringValue(0);
 			double score = inst.value(filter.getProbabilityIndex());
 			String label = inst.stringValue(filter.getOutputFormIndex());
 
