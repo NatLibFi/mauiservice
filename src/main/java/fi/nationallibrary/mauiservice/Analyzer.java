@@ -39,57 +39,54 @@ import weka.core.Instances;
 
 public class Analyzer {
 	private static Logger logger = LoggerFactory.getLogger(Analyzer.class);
-	
+
 	public AnalyzerResponse analyze(MauiFilter filter, String input) {
 		FastVector atts = new FastVector(3);
-        atts.addElement(new Attribute("filename", (FastVector) null));
-        atts.addElement(new Attribute("doc", (FastVector) null));
-        atts.addElement(new Attribute("keyphrases", (FastVector) null));
-        Instances data = new Instances("keyphrase_training_data", atts, 0);
+		atts.addElement(new Attribute("filename", (FastVector) null));
+		atts.addElement(new Attribute("doc", (FastVector) null));
+		atts.addElement(new Attribute("keyphrases", (FastVector) null));
+		Instances data = new Instances("keyphrase_training_data", atts, 0);
 
-        double[] newInst = new double[3];
+		double[] newInst = new double[3];
+		newInst[0] = Instance.missingValue();
 
-        newInst[0] = Instance.missingValue();
-        //newInst[0] = data.attribute(0).addStringValue(document.getFileName());
+		// Adding the text of the document to the instance
+		newInst[1] = data.attribute(1).addStringValue(input);
 
-        // Adding the text of the document to the instance
-        newInst[1] = data.attribute(1).addStringValue(input);
-                        
-        newInst[2] = Instance.missingValue();
+		newInst[2] = Instance.missingValue();
 
-        data.add(new Instance(1.0, newInst));
+		data.add(new Instance(1.0, newInst));
 
-        try {
-                filter.input(data.instance(0));
-        } catch(MauiFilterException mfe) {
-                throw new IllegalArgumentException("Unable to process data", mfe);
-        }
+		try {
+			filter.input(data.instance(0));
+		} catch (MauiFilterException mfe) {
+			throw new IllegalArgumentException("Unable to process data", mfe);
+		}
 
-        data = data.stringFreeStructure();
-        
-        Instance inst;
-        logger.trace("-- Keyphrases and feature values:");
+		data = data.stringFreeStructure();
 
-        AnalyzerResponse response = new AnalyzerResponse();
-        while ((inst = filter.output()) != null) {
-            double probability = inst.value(filter.getProbabilityIndex());
-           
-            String title = inst.stringValue(filter.getOutputFormIndex());
-           
-            AnalyzerResult result = new AnalyzerResult();
-            result.setUri(inst.stringValue(0));
-            result.setScore(probability);
-            result.setLabel(title);
-            
-            if (logger.isTraceEnabled()) {
-                logger.trace(" - result " + result.getUri()+" ("+result.getLabel()+"), score = "+result.getScore());
-            }
-            
-            response.getResults().add(result);
-        }
-        
-        
-        return response;
+		Instance inst;
+		logger.trace("-- Keyphrases and feature values:");
+
+		AnalyzerResponse response = new AnalyzerResponse();
+		while ((inst = filter.output()) != null) {
+			String uri = inst.stringValue(filter.getNormalizedFormIndex());
+			double score = inst.value(filter.getProbabilityIndex());
+			String label = inst.stringValue(filter.getOutputFormIndex());
+
+			AnalyzerResult result = new AnalyzerResult();
+			result.setUri(uri);
+			result.setScore(score);
+			result.setLabel(label);
+
+			if (logger.isTraceEnabled()) {
+				logger.trace(" - result " + result.getUri() + " (" + result.getLabel() + "), score = " + result.getScore());
+			}
+
+			response.getResults().add(result);
+		}
+
+		return response;
 	}
-	
+
 }
