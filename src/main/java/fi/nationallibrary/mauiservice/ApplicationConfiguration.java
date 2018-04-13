@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,8 +57,8 @@ public class ApplicationConfiguration {
 	}
 	
 	@Bean
-	public MauiConfiguration mauiConfigration(MauiConfigurationFactory factory, ApplicationArguments arg) throws IOException
-	{
+	@Qualifier("configFileName")
+	public String configFileName(ApplicationArguments arg) {
 		String configFile = DEFAULT_CONFIGURATION_FILE;
 		
 		if (arg.containsOption("configuration")) {
@@ -69,10 +70,17 @@ public class ApplicationConfiguration {
 				throw new IllegalArgumentException("Please specify only one value for --configuration=file.ini");
 			}
 			configFile = tmp.get(0);
-			logger.info("Loading INI file "+configFile);
-		} else {
-		
+		}
+		return configFile;
+	}
+	
+	@Bean
+	public MauiConfiguration mauiConfigration(MauiConfigurationFactory factory, @Qualifier("configFileName") String configFile) throws IOException
+	{
+		if (DEFAULT_CONFIGURATION_FILE.equals(configFile)) {
 			logger.info("Loading INI file with default file name ("+configFile+"), you can specify another location via --configuration=path/to/file.ini");
+		} else {
+			logger.info("Loading INI file "+configFile);
 		}
 		
 		File iniFile = new File(configFile);
