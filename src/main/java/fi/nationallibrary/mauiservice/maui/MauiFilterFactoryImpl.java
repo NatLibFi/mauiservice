@@ -35,8 +35,6 @@ import com.entopix.maui.filters.MauiFilter;
 import com.entopix.maui.stemmers.Stemmer;
 import com.entopix.maui.stopwords.Stopwords;
 import com.entopix.maui.vocab.Vocabulary;
-import com.entopix.maui.vocab.VocabularyStoreFactory;
-import com.entopix.maui.vocab.VocabularyStore_HT;
 
 import fi.nationallibrary.mauiservice.ini.MauiFilterConfiguration;
 
@@ -51,9 +49,6 @@ public class MauiFilterFactoryImpl implements MauiFilterFactory {
 		
 		testFile("Model", modelFile);
 		testFile("Vocabulary", vocabFile);
-		
-		// TODO: Maui needs to be refactored 
-		VocabularyStoreFactory.setPrefferedVocabStoreType(VocabularyStore_HT.class);
 
 		try (InputStream is = new FileInputStream(modelFile)) {
 			ObjectInputStream in = new ObjectInputStream(is);
