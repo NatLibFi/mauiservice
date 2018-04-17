@@ -58,6 +58,20 @@ curl -F charset=iso-8859-15 -F text=@input.txt http://localhost:8080/maui/test/a
 curl -F limit=1 -F text=@input.txt http://localhost:8080/maui/test/analyze
 ```
 
+## Testing thread safety
+
+You need JMeter (version 4.0 was used) to run the threading test. 
+
+First, start the server:
+
+```shell
+mvn spring-boot:run -DMAUISERVICE_CONFIGURATION="src/test/resources/test-config/threading-test.ini"
+```
+
+Second, start jmeter using the test plan misc/threading-test.jmx
+
+Third, start the test. Any errors appearing in the listeners ("Errors" and "Aggregate Report") need to be investigated.
+
 ## Deploying a snapshot to Maven central
 
 
