@@ -93,7 +93,7 @@ public class AnalyzeControllerTest {
 		String json = "{\"text\":\"world, hello\"}";
 		
 		mvc.perform(MockMvcRequestBuilders
-				.post("/maui/foo/analyze")
+				.post("/foo/analyze")
 				.contentType(MediaType.APPLICATION_JSON)
 	            .content(json)
 				.accept(MediaType.APPLICATION_JSON)).
@@ -106,7 +106,7 @@ public class AnalyzeControllerTest {
 	public void getNonExistingService() throws Exception {
 		when(filters.getFilter("foo")).thenReturn(null);
 		mvc.perform(MockMvcRequestBuilders
-				.post("/maui/foo/analyze")
+				.post("/foo/analyze")
 				.accept(MediaType.APPLICATION_JSON)).
 		andExpect(status().is4xxClientError());
 	}

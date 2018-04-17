@@ -1,7 +1,6 @@
 package fi.nationallibrary.mauiservice;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -10,7 +9,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +68,7 @@ public class AnalyzeController {
 	private AnalysisParameterFactory analysisParameterFactory;
 	
 	
-	@RequestMapping(path = "/maui/{id}/analyze", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+	@RequestMapping(path = "/{id}/analyze", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	public AnalyzerResponse analyzeJSON(
 			@PathVariable("id") String configurationId,
 			@RequestBody Map<String, Object> parameters,
@@ -87,7 +85,7 @@ public class AnalyzeController {
 	}
 
 	
-	@RequestMapping(path = "/maui/{id}/analyze", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, method = RequestMethod.POST)
+	@RequestMapping(path = "/{id}/analyze", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE, method = RequestMethod.POST)
 	public AnalyzerResponse analyzeFormEncoded(
 			@PathVariable("id") String configurationId,
 			@RequestBody MultiValueMap<String, Object> parameters,
@@ -111,7 +109,7 @@ public class AnalyzeController {
 		return processRequest(configurationId, response, text, p);
 	}
 
-	@RequestMapping(path = "/maui/{id}/analyze", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, method = RequestMethod.POST)
+	@RequestMapping(path = "/{id}/analyze", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, method = RequestMethod.POST)
 	public AnalyzerResponse analyzeMultipart(
 			@PathVariable("id") String configurationId,
 			@RequestParam("text") MultipartFile textFile,

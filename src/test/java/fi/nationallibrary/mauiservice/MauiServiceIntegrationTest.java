@@ -81,7 +81,7 @@ public class MauiServiceIntegrationTest {
 		String json = mapper.writeValueAsString(request);
 		
 		mvc.perform(MockMvcRequestBuilders
-				.post("/maui/test/analyze")
+				.post("/test/analyze")
 				.contentType(MediaType.APPLICATION_JSON)
 	            .content(json)
 				.accept(MediaType.APPLICATION_JSON)).
