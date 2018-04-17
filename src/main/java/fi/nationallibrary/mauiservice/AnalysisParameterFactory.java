@@ -37,6 +37,9 @@ public class AnalysisParameterFactory {
 				
 				Object limit = map.get("limit");
 				if (limit != null) {
+					if (limit instanceof String) {
+						limit = new Integer((String)limit);
+					}
 					if (!(limit instanceof Number)) {
 						throw new IllegalArgumentException("Value for key \"limit\" must be a Number");
 					}

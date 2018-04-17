@@ -2,6 +2,7 @@ package fi.nationallibrary.mauiservice;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -91,7 +92,16 @@ public class AnalyzeController {
 			logger.trace("Received FORM analysis request for id '"+configurationId+"' with text '"+parameters.getFirst("text")+"'");
 		}
 		String text = (String)parameters.getFirst("text");
-		AnalysisParameters p = analysisParameterFactory.createParameters(parameters.get("parameters"));
+		
+		// For form urlencoded requests we need to formulate the parameters object from keys prefixed with "parameters." 
+		Map<String, Object> extraParameters = new HashMap<>();
+		for (String key : parameters.keySet()) {
+			if (key.indexOf("parameters.") == 0) {
+				extraParameters.put(key.substring(11), parameters.getFirst(key));
+			}
+		}
+		
+		AnalysisParameters p = analysisParameterFactory.createParameters(extraParameters);
 		
 		return processRequest(configurationId, response, text, p);
 	}
