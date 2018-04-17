@@ -1,5 +1,7 @@
 package fi.nationallibrary.mauiservice;
 
+import java.util.Collection;
+
 /*-
  * #%L
  * fi.nationallibrary:mauiservice
@@ -27,6 +29,8 @@ package fi.nationallibrary.mauiservice;
 import java.util.Map;
 
 public class AnalysisParameterFactory {
+	
+	@SuppressWarnings("rawtypes")
 	public AnalysisParameters createParameters(Object o) {
 		AnalysisParameters ret = new AnalysisParameters();
 		
@@ -37,11 +41,19 @@ public class AnalysisParameterFactory {
 				
 				Object limit = map.get("limit");
 				if (limit != null) {
+					// Take first value if the value is a collection
+					if (limit instanceof Collection) {
+						limit = ((Collection)limit).iterator().next();
+					}
+					
+					// If the value is a string, convert it into an integer
 					if (limit instanceof String) {
 						limit = new Integer((String)limit);
 					}
+					
+					// If it's not a number by now, we don't know what to do
 					if (!(limit instanceof Number)) {
-						throw new IllegalArgumentException("Value for key \"limit\" must be a Number");
+						throw new IllegalArgumentException("Value for key \"limit\" must be a Number, but it's a "+limit.getClass());
 					}
 					
 					ret.setLimitNumberOfResults(((Number)limit).intValue());

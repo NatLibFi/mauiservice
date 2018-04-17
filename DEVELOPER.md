@@ -46,7 +46,17 @@ curl -H "Content-Type: application/x-www-form-urlencoded" -X POST -d 'text=Arkeo
 curl -H "Content-Type: application/x-www-form-urlencoded" -X POST -d 'text=Arkeologiaa sanotaan joskus myös muinaistutkimukseksi tai muinaistieteeksi. Se on humanistinen tiede tai oikeammin joukko tieteitä, jotka tutkivat ihmisen menneisyyttä. Tutkimusta tehdään analysoimalla muinaisjäännöksiä eli niitä jälkiä, joita ihmisten toiminta on jättänyt maaperään tai vesistöjen pohjaan&parameters.limit=1' http://localhost:8080/maui/test/analyze
 ```
 
+To send files from your local disk, you can use multipart/form-data. The example below expects you have a file called input.txt in your current working directory.
+```shell
+# File upload (default charset utf-8)
+curl -F text=@input.txt http://localhost:8080/maui/test/analyze
 
+# File upload with specified character set
+curl -F charset=iso-8859-15 -F text=@input.txt http://localhost:8080/maui/test/analyze
+
+# File upload with result limit
+curl -F limit=1 -F text=@input.txt http://localhost:8080/maui/test/analyze
+```
 
 ## Deploying a snapshot to Maven central
 

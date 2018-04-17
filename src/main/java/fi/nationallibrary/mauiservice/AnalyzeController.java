@@ -1,5 +1,7 @@
 package fi.nationallibrary.mauiservice;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -8,6 +10,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +45,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.entopix.maui.filters.MauiFilter;
 
@@ -106,6 +111,34 @@ public class AnalyzeController {
 		return processRequest(configurationId, response, text, p);
 	}
 
+	@RequestMapping(path = "/maui/{id}/analyze", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, method = RequestMethod.POST)
+	public AnalyzerResponse analyzeMultipart(
+			@PathVariable("id") String configurationId,
+			@RequestParam("text") MultipartFile textFile,
+			@RequestParam("charset") String charset,
+			@RequestParam MultiValueMap<String, Object> parameters,
+			HttpServletResponse response)
+	{
+		if (charset == null) {
+			charset = "UTF-8";
+		}
+		
+		if (logger.isTraceEnabled()) {
+			logger.trace("Received a multipart analysis request for id '"+configurationId+"', file character set is "+charset);
+		}
+
+		String text;
+		try {
+			text = new String(textFile.getBytes(), charset);
+		} catch(IOException ie) {
+			throw new IllegalArgumentException(ie);
+		}
+		
+		AnalysisParameters p = analysisParameterFactory.createParameters(parameters);
+		
+		return processRequest(configurationId, response, text, p);
+	}
+	
 	private AnalyzerResponse processRequest(String configurationId, HttpServletResponse httpResponse, String text, AnalysisParameters p) {
 		MauiFilter filter = filters.getFilter(configurationId);
 		
