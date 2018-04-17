@@ -1,4 +1,6 @@
 language: java
 sudo: false
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libvoikko1
 install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -Dgpg.skip=true
-#script: mvn clean verify -Dgpg.skip=true
