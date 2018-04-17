@@ -1,5 +1,8 @@
 package fi.nationallibrary.mauiservice;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -44,6 +47,7 @@ import com.entopix.maui.filters.MauiFilter;
 
 import fi.nationallibrary.mauiservice.maui.MauiFilters;
 import fi.nationallibrary.mauiservice.response.AnalyzerResponse;
+import fi.nationallibrary.mauiservice.response.AnalyzerResponse.AnalyzerResult;
 
 
 @RestController
@@ -56,6 +60,9 @@ public class AnalyzeController {
 	@Autowired
 	private Analyzer analyzer;
 
+	@Autowired
+	private AnalysisParameterFactory analysisParameterFactory;
+	
 	
 	@RequestMapping(path = "/maui/{id}/analyze", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
 	public AnalyzerResponse analyzeJSON(
@@ -68,8 +75,9 @@ public class AnalyzeController {
 		}
 		
 		String text = (String)parameters.get("text");
+		AnalysisParameters p = analysisParameterFactory.createParameters(parameters.get("parameters"));
 		
-		return processRequest(configurationId, response, text);
+		return processRequest(configurationId, response, text, p);
 	}
 
 	
@@ -83,28 +91,54 @@ public class AnalyzeController {
 			logger.trace("Received FORM analysis request for id '"+configurationId+"' with text '"+parameters.getFirst("text")+"'");
 		}
 		String text = (String)parameters.getFirst("text");
+		AnalysisParameters p = analysisParameterFactory.createParameters(parameters.get("parameters"));
 		
-		return processRequest(configurationId, response, text);
+		return processRequest(configurationId, response, text, p);
 	}
 
-	private AnalyzerResponse processRequest(String configurationId, HttpServletResponse response, String text) {
+	private AnalyzerResponse processRequest(String configurationId, HttpServletResponse httpResponse, String text, AnalysisParameters p) {
 		MauiFilter filter = filters.getFilter(configurationId);
 		
 		if (filter == null) {
-			response.setStatus(404);
+			httpResponse.setStatus(404);
 			return null;
 		}
 		
 		// Filters are not synchronized
-		AnalyzerResponse result;
+		AnalyzerResponse response;
 		synchronized(filter) {
-			result = analyzer.analyze(filter, text);
+			response = analyzer.analyze(filter, text);
+		}
+		
+		sortResults(response);
+		
+		if (p.getLimitNumberOfResults() != null) {
+			limitResults(response, p.getLimitNumberOfResults());
 		}
 		
 		if (logger.isTraceEnabled()) {
-			logger.trace(" - analysis result: '"+result+"'");
+			logger.trace(" - analysis result: '"+response+"'");
 		}
 		
-		return result;
+		return response;
 	}
+	
+	void sortResults(AnalyzerResponse response) {
+		Collections.sort(response.getResults(), new Comparator<AnalyzerResult>() {
+			@Override
+			public int compare(AnalyzerResult a, AnalyzerResult b) {
+				return b.getScore().compareTo(a.getScore());
+			}
+		});
+	}
+	
+	void limitResults(AnalyzerResponse response, Integer limitNumberOfResults) {
+		List<AnalyzerResult> tmp = response.getResults();
+		
+		if (tmp.size() > limitNumberOfResults) {
+			tmp = tmp.subList(0, limitNumberOfResults);
+			response.setResults(tmp);
+		}
+	}
+
 }

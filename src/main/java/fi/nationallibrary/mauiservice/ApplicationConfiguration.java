@@ -114,4 +114,9 @@ public class ApplicationConfiguration {
 	public Analyzer analyzer() {
 		return new Analyzer();
 	}
+	
+	@Bean
+	public AnalysisParameterFactory analysisParameterFactory() {
+		return new AnalysisParameterFactory();
+	}
 }

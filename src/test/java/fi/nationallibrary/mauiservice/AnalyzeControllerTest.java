@@ -31,6 +31,7 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import org.junit.Test;
@@ -67,6 +68,9 @@ public class AnalyzeControllerTest {
 	
 	@Autowired
 	private MockMvc mvc;
+	
+	@Autowired
+	private AnalyzeController analyzeController;
 	
 	public static final MediaType APPLICATION_JSON_UTF8 =
 			new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
@@ -106,4 +110,75 @@ public class AnalyzeControllerTest {
 				.accept(MediaType.APPLICATION_JSON)).
 		andExpect(status().is4xxClientError());
 	}
+	
+	@Test
+	public void testResultOrdering_OutOfOrder() {
+		AnalyzerResult tmp1 = new AnalyzerResult();
+		tmp1.setScore(1.0);
+		AnalyzerResult tmp2 = new AnalyzerResult();
+		tmp2.setScore(2.0);
+		
+		AnalyzerResponse response = new AnalyzerResponse();
+		response.getResults().add(tmp1);
+		response.getResults().add(tmp2);
+		
+		analyzeController.sortResults(response);
+		
+		assertEquals(2, response.getResults().size());
+		assertSame(tmp2, response.getResults().get(0));
+		assertSame(tmp1, response.getResults().get(1));
+	}
+	
+	@Test
+	public void testResultOrdering_InOrder() {
+		AnalyzerResult tmp1 = new AnalyzerResult();
+		tmp1.setScore(1.0);
+		AnalyzerResult tmp2 = new AnalyzerResult();
+		tmp2.setScore(2.0);
+		
+		AnalyzerResponse response = new AnalyzerResponse();
+		response.getResults().add(tmp2);
+		response.getResults().add(tmp1);
+		
+		analyzeController.sortResults(response);
+		
+		assertEquals(2, response.getResults().size());
+		assertSame(tmp2, response.getResults().get(0));
+		assertSame(tmp1, response.getResults().get(1));
+	}
+	
+	@Test
+	public void testResultLimit_NoLimitingRequired() {
+		AnalyzerResult tmp1 = new AnalyzerResult();
+		tmp1.setScore(1.0);
+		AnalyzerResult tmp2 = new AnalyzerResult();
+		tmp2.setScore(2.0);
+		
+		AnalyzerResponse response = new AnalyzerResponse();
+		response.getResults().add(tmp1);
+		response.getResults().add(tmp2);
+		
+		analyzeController.limitResults(response, 3);
+		
+		assertEquals(2, response.getResults().size());
+	}
+	
+
+	@Test
+	public void testResultLimit_LimitingRequired() {
+		AnalyzerResult tmp1 = new AnalyzerResult();
+		tmp1.setScore(1.0);
+		AnalyzerResult tmp2 = new AnalyzerResult();
+		tmp2.setScore(2.0);
+		
+		AnalyzerResponse response = new AnalyzerResponse();
+		response.getResults().add(tmp1);
+		response.getResults().add(tmp2);
+		
+		analyzeController.limitResults(response, 1);
+		
+		assertEquals(1, response.getResults().size());
+		assertSame(tmp1, response.getResults().get(0));
+	}
+	
 }
