@@ -70,6 +70,12 @@ public class ApplicationConfiguration {
 				throw new IllegalArgumentException("Please specify only one value for --configuration=file.ini");
 			}
 			configFile = tmp.get(0);
+		} else {
+			String property = System.getProperty("MAUISERVICE_CONFIGURATION");
+			if (property != null) {
+				logger.info("Reading configuration file from system property MAUISERVICE_CONFIGURATION");
+				configFile = property;
+			}
 		}
 		return configFile;
 	}

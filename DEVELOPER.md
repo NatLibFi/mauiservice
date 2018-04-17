@@ -6,14 +6,26 @@ To build and run, run the following commands:
 
 ```shell
 mvn clean install
-java -jar target/mauiservice-0.0.1-SNAPSHOT.jar --configuration=src/test/resources/test-config/test.ini
+java -jar target/mauiservice-0.0.1-SNAPSHOT.war --configuration=src/test/resources/test-config/test.ini
 ```
 
 .. or by just using maven
 
 ```shell
-mvn spring-boot:run -Dspring-boot.run.arguments="--configuration=src/test/resources/test-config/test.ini"
+mvn spring-boot:run -DMAUISERVICE_CONFIGURATION="src/test/resources/test-config/test.ini"
 ```
+
+## Deploying on a servlet container
+
+Building the project will result in a .war file (under target/). That war file can be deployed in a servlet container. However,
+you need to configure where the configuration file is. To do this, you need to add the following option into options given to the JVM:
+
+```
+-DMAUISERVICE_CONFIGURATION="/the/path/to/the/configuration.ini"
+```
+
+Absolute paths are recommended for servlet containers as relative paths are resolved based on the CWD of the process which might not be what you expect it to be. Note that you can use relative paths within the INI file as mauiservice will resolve them based on the configuration path.
+
 
 ## Testing the service
 
@@ -33,3 +45,7 @@ curl -H "Content-Type: application/x-www-form-urlencoded" -X POST -d 'text=Arkeo
 
 ## Deploying a release to Maven central
 
+
+# Caveats in the implementation
+
+The Maui API is not thread safe, at least yet.
