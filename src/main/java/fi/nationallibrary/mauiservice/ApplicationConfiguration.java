@@ -16,9 +16,9 @@ import fi.nationallibrary.mauiservice.ini.INI4JMauiConfigurationFactoryImpl;
 import fi.nationallibrary.mauiservice.ini.MauiConfiguration;
 import fi.nationallibrary.mauiservice.ini.MauiConfigurationFactory;
 import fi.nationallibrary.mauiservice.maui.MauiFilterFactory;
-import fi.nationallibrary.mauiservice.maui.MauiFilterFactoryImpl;
 import fi.nationallibrary.mauiservice.maui.MauiFilterInitializationException;
 import fi.nationallibrary.mauiservice.maui.MauiFilters;
+import fi.nationallibrary.mauiservice.maui.SharedVocabularyMauiFilterFactoryImpl;
 
 /*-
  * #%L
@@ -97,7 +97,7 @@ public class ApplicationConfiguration {
 	
 	@Bean
 	public MauiFilterFactory mauiFilterFactory() {
-		return new MauiFilterFactoryImpl();
+		return new SharedVocabularyMauiFilterFactoryImpl();
 	}
 	
 	@Bean
