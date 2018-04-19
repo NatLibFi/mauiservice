@@ -72,11 +72,29 @@ Second, start jmeter using the test plan misc/threading-test.jmx
 
 Third, start the test. Any errors appearing in the listeners ("Errors" and "Aggregate Report") need to be investigated.
 
-## Deploying a snapshot to Maven central
+## Deploying a snapshot to Sonatype repository
 
+```shell
+mvn clean deploy
+```
 
 ## Deploying a release to Maven central
 
+This has been tested to work with Maven 3.5.2
+
+```shell
+mvn clean
+mvn release:prepare
+mvn release:perform
+```
+
+If the release:perform phase fails for some reason, run the following commands before attempting the next release. Note, these instructions are untested and it is possible that release:rollback removes the tags.
+
+```shell
+mvn release:rollback
+git tag -d mauiservice-[version]
+git push origin :mauiservice-[version]
+```
 
 # Caveats in the implementation
 
