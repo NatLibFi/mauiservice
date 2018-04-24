@@ -98,4 +98,4 @@ git push origin :mauiservice-[version]
 
 # Caveats in the implementation
 
-The Maui API is not thread safe, at least yet.
+The Maui API is not thread safe. However the REST API is protected internally so that parallel annotation tasks are never run on the same configuration. Parallel annotation is possible between different configurations. As such, ther is no risk to the user of the service, but it is important to note that this means annotating cannot be scaled to parallel processor unless multiple instances of mauiservice are deployed.
