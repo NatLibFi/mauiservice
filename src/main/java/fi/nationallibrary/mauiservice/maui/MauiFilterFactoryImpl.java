@@ -44,8 +44,8 @@ public class MauiFilterFactoryImpl implements MauiFilterFactory {
 	public MauiFilter createFilter(MauiFilterConfiguration config) throws MauiFilterInitializationException {
 		MauiFilter ret;
 
-		File modelFile = new File(config.getConfigurationDirectory(), config.getModel());
-		File vocabFile = new File(config.getConfigurationDirectory(), config.getVocab());
+		File modelFile = getFilePossiblyInRelativePath(config.getConfigurationDirectory(), config.getModel());
+		File vocabFile = getFilePossiblyInRelativePath(config.getConfigurationDirectory(), config.getVocab());
 		
 		testFile("Model", modelFile);
 		testFile("Vocabulary", vocabFile);
@@ -96,6 +96,14 @@ public class MauiFilterFactoryImpl implements MauiFilterFactory {
 		return ret;
 	}
 
+	private File getFilePossiblyInRelativePath(File path, String relativeOrAbsolute) {
+		if (relativeOrAbsolute.startsWith("/")) {
+			return new File(relativeOrAbsolute);
+		} else {
+			return new File(path, relativeOrAbsolute);
+		}
+	}
+	
 	private void testFile(String type, File file) throws MauiFilterInitializationException {
 		if (!file.exists()) {
 			throw new MauiFilterInitializationException(type+" file "+file+" does not exist!");
