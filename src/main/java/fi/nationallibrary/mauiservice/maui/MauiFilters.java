@@ -1,5 +1,7 @@
 package fi.nationallibrary.mauiservice.maui;
 
+import java.util.Collections;
+
 /*-
  * #%L
  * fi.nationallibrary:mauiservice
@@ -27,6 +29,7 @@ package fi.nationallibrary.mauiservice.maui;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +71,10 @@ public class MauiFilters {
 			throw new IllegalStateException("Call init() before getFilter()");
 		}
 		return filters.get(id);
+	}
+	
+	public Set<String> getFilterNames() {
+		return Collections.unmodifiableSet(filters.keySet());
 	}
 
 	public void init() throws MauiFilterInitializationException {

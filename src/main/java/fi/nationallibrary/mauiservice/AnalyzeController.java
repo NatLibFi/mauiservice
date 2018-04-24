@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -66,6 +67,26 @@ public class AnalyzeController {
 
 	@Autowired
 	private AnalysisParameterFactory analysisParameterFactory;
+	
+	@RequestMapping(path = "/", method = RequestMethod.GET)
+	public Set<String> index() {
+		return filters.getFilterNames();
+	}
+	
+	@RequestMapping(path = "/{id}", method = RequestMethod.GET)
+	public Set<String> indexForId(
+			@PathVariable("id") String configurationId,
+			HttpServletResponse httpResponse)
+	{
+		MauiFilter filter = filters.getFilter(configurationId);
+		
+		if (filter == null) {
+			httpResponse.setStatus(404);
+			return null;
+		}
+		
+		return Collections.singleton("analyze");
+	}
 	
 	
 	@RequestMapping(path = "/{id}/analyze", consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
