@@ -81,7 +81,7 @@
 		<dependency>
 			<groupId>fi.nationallibrary</groupId>
 			<artifactId>maui</artifactId>
-			<version>1.4.3</version>
+			<version>1.4.5-SNAPSHOT</version>
 
 			<exclusions>
 				<exclusion>
