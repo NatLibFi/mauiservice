@@ -60,9 +60,9 @@ public class SharedVocabularyMauiFilterFactoryImpl implements MauiFilterFactory 
 	public MauiFilter createFilter(MauiFilterConfiguration config) throws MauiFilterInitializationException {
 		MauiFilter ret;
 
-		File modelFile = new File(config.getConfigurationDirectory(), config.getModel());
-		File vocabFile = new File(config.getConfigurationDirectory(), config.getVocab());
-		
+		File modelFile = MauiFilterFactoryImpl.getFilePossiblyInRelativePath(config.getConfigurationDirectory(), config.getModel());
+		File vocabFile = MauiFilterFactoryImpl.getFilePossiblyInRelativePath(config.getConfigurationDirectory(), config.getVocab());
+
 		testFile("Model", modelFile);
 		testFile("Vocabulary", vocabFile);
 

@@ -96,7 +96,7 @@ public class MauiFilterFactoryImpl implements MauiFilterFactory {
 		return ret;
 	}
 
-	private File getFilePossiblyInRelativePath(File path, String relativeOrAbsolute) {
+	static File getFilePossiblyInRelativePath(File path, String relativeOrAbsolute) {
 		if (relativeOrAbsolute.startsWith("/")) {
 			return new File(relativeOrAbsolute);
 		} else {
