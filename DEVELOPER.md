@@ -32,6 +32,37 @@ JAVA_OPTS="-Djava.awt.headless=true -Xmx2G -XX:+UseConcMarkSweepGC -DMAUISERVICE
 
 Absolute paths are recommended for servlet containers as relative paths are resolved based on the CWD of the process which might not be what you expect it to be. Note that you can use relative paths within the INI file as mauiservice will resolve them based on the configuration path.
 
+## Configuration file
+
+The configuration file is INI style and specifies any number of configurations. Each configuration specifies a language, pre-trained Maui model file (built using MauiModelBuilder), stemmer, stopwords, vocabulary and vocabulary format. These correspond exactly to Maui options.
+
+Example:
+
+```
+[jyu-fin]
+language = fi
+model = /var/lib/maui/model/jyu-fin
+stemmer = CachingFinnishStemmer
+stopwords = StopwordsFinnish
+vocab = /var/lib/maui/vocab/yso-skos.rdf
+vocabformat = skos
+
+[jyu-eng]
+language = en
+model = /var/lib/maui/model/jyu-eng
+stemmer = PorterStemmer
+stopwords = StopwordsEnglish
+vocab = /var/lib/maui/vocab/yso-skos.rdf
+vocabformat = skos
+
+[jyu-swe]
+language = sv
+model = /var/lib/maui/model/jyu-swe
+stemmer = SwedishStemmer
+stopwords = StopwordsSwedish
+vocab = /var/lib/maui/vocab/yso-skos.rdf
+vocabformat = skos
+```
 
 ## Testing the service
 
