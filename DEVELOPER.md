@@ -24,6 +24,12 @@ you need to configure where the configuration file is. To do this, you need to a
 -DMAUISERVICE_CONFIGURATION="/the/path/to/the/configuration.ini"
 ```
 
+For tomcat8 on Ubuntu, you can set JVM options like this in `/etc/default/tomcat8`:
+
+```
+JAVA_OPTS="-Djava.awt.headless=true -Xmx2G -XX:+UseConcMarkSweepGC -DMAUISERVICE_CONFIGURATION=/etc/mauiservice/service.ini"
+```
+
 Absolute paths are recommended for servlet containers as relative paths are resolved based on the CWD of the process which might not be what you expect it to be. Note that you can use relative paths within the INI file as mauiservice will resolve them based on the configuration path.
 
 
