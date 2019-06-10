@@ -8,8 +8,7 @@ RUN apt-get update \
 	## Clean up:
 	&& rm -rf /var/lib/apt/lists/* /usr/include/*
 
-COPY maui-1.4.5-jar-with-dependencies.jar /srv/maui/
-COPY mauiservice.ini kirjastonhoitaja /srv/maui/
+COPY maui-1.4.5-jar-with-dependencies.jar mauiservice.ini /srv/maui/
 COPY mauiservice-1.0.2.war /usr/local/tomcat/webapps/mauiservice.war
 
 ENV JAVA_OPTS="-Djava.awt.headless=true -Xmx2G -XX:+UseConcMarkSweepGC -DMAUISERVICE_CONFIGURATION=/srv/maui/mauiservice.ini"
