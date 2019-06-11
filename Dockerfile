@@ -1,8 +1,9 @@
-FROM tomcat:8-jdk11
+FROM tomcat:8-jdk11-slim
 
 RUN apt-get update \
-	## Voikko:
 	&& apt-get install -y --no-install-recommends \
+		wget \
+	## Voikko:
 		libvoikko1 \
 		voikko-fi \
 	## Clean up:
