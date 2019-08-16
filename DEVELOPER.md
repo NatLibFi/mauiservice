@@ -136,3 +136,26 @@ git push origin :mauiservice-[version]
 # Caveats in the implementation
 
 The Maui API is not thread safe. However the REST API is protected internally so that parallel annotation tasks are never run on the same configuration. Parallel annotation is possible between different configurations. As such, ther is no risk to the user of the service, but it is important to note that this means annotating cannot be scaled to parallel processor unless multiple instances of mauiservice are deployed.
+
+
+# Usage with Docker
+
+The docker image for Mauiservice can be build with
+```shell
+docker build -t mauiservice .
+```
+
+A model can be trained with 
+```shell
+docker run -v /path/to/annif-projects/:/annif-projects/ --rm mauiservice \
+  java -Xmx4G -cp maui-1.4.5-jar-with-dependencies.jar com.entopix.maui.main.MauiModelBuilder -l /annif-projects/Annif-corpora/fulltext/kirjastonhoitaja/maui-train/ -m /annif-projects/kirjastonhoitaja -v /annif-projects/Annif-corpora/vocab/yso-skos.rdf -f skos -i fi -s StopwordsFinnish -t CachingFinnishStemmer
+```
+Here the training data (`kirjastonhoitaja` (Ask a Librarian) collection) and vocabulary (SKOS) files are bind-mounted into the container from the host system in `/path/to/annif-projects/Annif-corpora/`. 
+
+The service can then be started with 
+```shell
+docker run --name mauiservice -v /path/to/annif-projects/:/annif-projects/ --rm --network="host" mauiservice
+```
+
+Here the use of `--network="host"` allows connecting to the service from the host system, e.g. [using Annif](https://github.com/NatLibFi/Annif/wiki/Usage-with-Docker#connecting-to-mauiservice-in-docker-container).
+
