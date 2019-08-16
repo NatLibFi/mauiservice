@@ -14,4 +14,4 @@ steps:
       tags: [latest]
     when:
       event: push
-      branch: [dockerize-mauiservice]
+      branch: [master]
