@@ -1,3 +1,7 @@
+# THIS REPOSITORY IS OBSOLETE.
+
+For Annif the similar functionality as offered by Maui is now available by MLLM backend.
+
 # MauiService
 
 This is a simple REST service for [Maui](https://github.com/NatLibFi/maui) annotations. The REST interface can be configured to host multiple parallel configurations (that is, different models, vocabularies, language etc.).
